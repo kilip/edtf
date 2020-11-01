@@ -7,7 +7,19 @@ This is a template for starting new PHP libraries. Copy or fork to get started q
 
 ## Usage
 
-TODO
+We have a working parser that returns start and end date elements in PHP arrays.
+
+We will add those array elements to corresponding value object elements.
+
+An example for current parser would be:
+
+$dateText = "1985-04-12T23:20:30/2011-01-12T23:19:35+01:32";
+
+$myEDTFParser = new EDTFDateTime($dateText);
+
+print_r( $myEDTFParser->startDateArr );
+
+print_r( $myEDTFParser->endDateArr );
 
 ## Installation
 

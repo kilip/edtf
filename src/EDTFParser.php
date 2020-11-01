@@ -1,9 +1,9 @@
 <?php
 
-class EDTFDateTime
+class EDTFParser
 {
 
-	public
+	public static
 	$regexPattern = "/(?x) # Turns on free spacing mode for easier readability					
 					
 					# Year start
@@ -50,48 +50,25 @@ class EDTFDateTime
 						(?<tzminute>[0-5][0-9]))?)?)?)?$
 					# Others end #
 					/";
-
-	public $dateArr;
-	public $startDateArr;
-	public $endDateArr;
-	public $isItDatePair = FALSE; /* It is TRUE if there is both start and end date */
 	
+	public static $isItDatePair = FALSE;
 	
-	/* TODO: Make the class constructor able to get zero or more parameters
-	public function __construct() {
-		$parameters = func_get_args();
-		...
-	}
-	*/
-	
-
-	public function __construct($dateStr) {		
-		
-		$this->dateArr = $this->parseDate($dateStr);
-		
-		if ( sizeof($this->dateArr) > 1)
-			$this->isItDatePair = TRUE;
-		if ( !$this->isItDatePair ) {
-			$this->startDateArr = $this->dateArr[0];
-		} else if ( $this->isItDatePair ) {
-			$this->startDateArr = $this->dateArr[0];
-			$this->endDateArr   = $this->dateArr[1];
-		}
-	}
-
 	public function parseDate($dateStr) {
-
-		$splitArr = preg_split("/\//", $dateStr);
 		
-		if ( sizeof( $splitArr ) == 1 ) {
-			preg_match( $regexPattern, $splitArr[0], $dateArr );
-			return $dateArr;
+		$splitArr = preg_split("/\//", $dateStr);		
+		
+		// TODO: Remove it print_r( $splitArr );
+		
+		if ( sizeof( $splitArr ) == 1 ) {			
+			preg_match( static::$regexPattern, $splitArr[0], $singleDateArr );
+			return $singleDateArr;
 		} else if ( sizeof($splitArr) > 1 ) {
-			preg_match( $this->regexPattern, $splitArr[0], $startDateArr );
-			preg_match( $this->regexPattern, $splitArr[1], $endDateArr );
-			return array( $startDateArr, $endDateArr );
+			preg_match( static::$regexPattern, $splitArr[0], $startDateArr );
+			preg_match( static::$regexPattern, $splitArr[1], $endDateArr );									
+			static::$isItDatePair = TRUE;
+			return array( $startDateArr , $endDateArr);						
 		}
-		return NULL;
+		
 	}
-						
+	
 }

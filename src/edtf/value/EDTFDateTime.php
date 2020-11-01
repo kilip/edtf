@@ -29,6 +29,4 @@ final class EDTFDateTime
     {
         return $this->endYear;
     }
-	
-	
 }

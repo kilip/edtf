@@ -55,9 +55,7 @@ class EDTFParser
 	
 	public function parseDate($dateStr) {
 		
-		$splitArr = preg_split("/\//", $dateStr);		
-		
-		// TODO: Remove it print_r( $splitArr );
+		$splitArr = preg_split("/\//", $dateStr);	
 		
 		if ( sizeof( $splitArr ) == 1 ) {			
 			preg_match( static::$regexPattern, $splitArr[0], $singleDateArr );

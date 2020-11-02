@@ -1,5 +1,7 @@
 <?php
 
+use EDTF\Value\EDTFDateTime as EDTFDateTime;
+
 class EDTFParser
 {
 	
@@ -52,22 +54,106 @@ class EDTFParser
 					/";
 	
 	public static bool $isItDatePair = FALSE;
+	public static array $parsedEDTFArray;
+	public static array $startDateArray;
+	public static array $endDateArray;
+	public static array $onlyDateArray;
 	
-	public static function parseDate(string $dateStr): array
-	{	
-		$splitArr = preg_split("/\//", $dateStr);
+	public static function parseEDTFDate(string $dateStr): void
+	{
 		
-		if ( sizeof( $splitArr ) == 1 ) {			
-			preg_match( static::$regexPattern, $splitArr[0], $singleDateArr );
-			return $singleDateArr;
-		} else if ( sizeof($splitArr) > 1 ) {
-			preg_match( static::$regexPattern, $splitArr[0], $startDateArr );
-			preg_match( static::$regexPattern, $splitArr[1], $endDateArr );									
+		$dateDelimiter = "/";
+		$pos = strpos($dateStr, $dateDelimiter);
+		
+		if ($pos === false) {
+			preg_match( static::$regexPattern, $dateStr, $singleDateArr );
+			static::$parsedEDTFArray = $singleDateArr;
+			static::$onlyDateArray = $singleDateArr;
+		} else {			
+			$startDateStr = substr( $dateStr, 0, strrpos( $dateStr, '/' ) );
+			$endDateStr   = substr( $dateStr, strrpos( $dateStr, '/' ) + 1 );
+			
+			preg_match( static::$regexPattern, $startDateStr, $startDateArr );
+			preg_match( static::$regexPattern, $endDateStr, $endDateArr );
 			static::$isItDatePair = TRUE;
-			return array( $startDateArr , $endDateArr);						
+			static::$parsedEDTFArray = array( $startDateArr , $endDateArr);
+			static::$startDateArray = $startDateArr;
+			static::$endDateArray = $endDateArr;
 		}
+	}
 
-		return array();
+	public static function getStartDate(): EDTFDateTime {
+
+		if ( EDTFParser::$isItDatePair ) {
+			$dateTime = new EDTFDateTime( 
+					static::$startDateArray['second'],
+					static::$startDateArray['minute'],
+					static::$startDateArray['hour'],
+					static::$startDateArray['daynum'],
+					static::$startDateArray['monthnum'],
+					static::$startDateArray['yearnum']
+				);			
+			return $dateTime;
+		} else {
+			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
+				'',
+				'',
+				''
+			);			
+		}
+		return $dateTime;		
+	}	
+
+	public static function getEndDate(): EDTFDateTime {
+
+		if ( EDTFParser::$isItDatePair ) {
+			$dateTime = new EDTFDateTime( 
+					static::$endDateArray['second'],
+					static::$endDateArray['minute'],
+					static::$endDateArray['hour'],
+					static::$endDateArray['daynum'],
+					static::$endDateArray['monthnum'],
+					static::$endDateArray['yearnum']
+				);			
+			return $dateTime;
+		} else {
+			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
+				'',
+				'',
+				''
+			);			
+		}
+		return $dateTime;		
 	}
 	
+	public static function getOnlyDate(): EDTFDateTime {
+
+		if ( !EDTFParser::$isItDatePair ) {
+			$dateTime = new EDTFDateTime( 
+					static::$onlyDateArray['second'],
+					static::$onlyDateArray['minute'],
+					static::$onlyDateArray['hour'],
+					static::$onlyDateArray['daynum'],
+					static::$onlyDateArray['monthnum'],
+					static::$onlyDateArray['yearnum']
+				);			
+			return $dateTime;
+		} else {
+			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
+				'',
+				'',
+				''
+			);
+		}
+		return $dateTime;		
+	}
 }

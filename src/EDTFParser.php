@@ -2,7 +2,7 @@
 
 class EDTFParser
 {
-
+	
 	public static
 	$regexPattern = "/(?x) # Turns on free spacing mode for easier readability					
 					
@@ -53,8 +53,8 @@ class EDTFParser
 	
 	public static $isItDatePair = FALSE;
 	
-	public function parseDate($dateStr) {
-		
+	public function parseDate($dateStr)
+	{	
 		$splitArr = preg_split("/\//", $dateStr);	
 		
 		if ( sizeof( $splitArr ) == 1 ) {			
@@ -65,8 +65,7 @@ class EDTFParser
 			preg_match( static::$regexPattern, $splitArr[1], $endDateArr );									
 			static::$isItDatePair = TRUE;
 			return array( $startDateArr , $endDateArr);						
-		}
-		
+		}	
 	}
 	
 }

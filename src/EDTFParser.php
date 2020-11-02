@@ -67,6 +67,7 @@ class EDTFParser
 		
 		if ($pos === false) {
 			preg_match( static::$regexPattern, $dateStr, $singleDateArr );
+			static::$isItDatePair = FALSE;
 			static::$parsedEDTFArray = $singleDateArr;
 			static::$onlyDateArray = $singleDateArr;
 		} else {			

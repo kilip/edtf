@@ -28,7 +28,7 @@ final class EDTFDateTime
 		$this->year   = $year;	
     }
   
-	public function getSecond(): string { return $this->second;} 
+	public function getSecond(): string { return $this->second;}
 	public function getMinute(): string {return $this->minute;}
 	public function getHour(): string {return $this->hour;}
 	public function getDay(): string {return $this->day;}
@@ -36,7 +36,6 @@ final class EDTFDateTime
 	public function getYear(): string {return $this->year;}
 	
 	public function __toString() {
-		
 		return
 			"Second:" . $this->second . "\n" .
 			"Minute:" . $this->minute . "\n" .
@@ -44,7 +43,7 @@ final class EDTFDateTime
 			"Day:"    . $this->day . "\n" .
 			"Month:"  . $this->month . "\n" .
 			"Year:"   . $this->year . "\n"
-			;		
+			;
 	}
 
 /* TODO: Complete equals method
@@ -53,7 +52,5 @@ final class EDTFDateTime
         return $this->startYear === $EDTFDateTime->startYear
             && $this->endYear === $EDTFDateTime->endYear;
     }
-*/
-
-	
+*/	
 }

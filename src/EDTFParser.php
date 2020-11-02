@@ -3,7 +3,7 @@
 class EDTFParser
 {
 	
-	public static
+	public static string
 	$regexPattern = "/(?x) # Turns on free spacing mode for easier readability					
 					
 					# Year start
@@ -51,11 +51,11 @@ class EDTFParser
 					# Others end #
 					/";
 	
-	public static $isItDatePair = FALSE;
+	public static bool $isItDatePair = FALSE;
 	
-	public function parseDate($dateStr)
+	public function parseDate(string $dateStr): array
 	{	
-		$splitArr = preg_split("/\//", $dateStr);	
+		$splitArr = preg_split("/\//", $dateStr);
 		
 		if ( sizeof( $splitArr ) == 1 ) {			
 			preg_match( static::$regexPattern, $splitArr[0], $singleDateArr );

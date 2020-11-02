@@ -16,7 +16,7 @@ $arr = EDTFParser::parseDate( $dateText );
 
 if ( EDTFParser::$isItDatePair ) {
 	$dateTime = new EDTFDateTime( 
-			$arr[0]['second'],	
+			$arr[0]['second'],
 			$arr[0]['minute'],
 			$arr[0]['hour'],
 			$arr[0]['daynum'],

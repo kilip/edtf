@@ -53,7 +53,7 @@ class EDTFParser
 	
 	public static bool $isItDatePair = FALSE;
 	
-	public function parseDate(string $dateStr): array
+	public static function parseDate(string $dateStr): array
 	{	
 		$splitArr = preg_split("/\//", $dateStr);
 		
@@ -65,7 +65,9 @@ class EDTFParser
 			preg_match( static::$regexPattern, $splitArr[1], $endDateArr );									
 			static::$isItDatePair = TRUE;
 			return array( $startDateArr , $endDateArr);						
-		}	
+		}
+
+		return NULL;
 	}
 	
 }

@@ -59,7 +59,17 @@ class EDTFParser
 	public static array $parsedEDTFArray;
 	public static array $startDateArray;
 	public static array $endDateArray;
-	public static array $onlyDateArray;
+	
+	
+	public static array $onlyDateArray = array(
+		'second' => '',
+		'minute' => '',
+		'hour' => '',
+		'daynum' => '',
+		'monthnum' => '',
+		'yearnum' => ''		
+	);
+	
 	
 	public static function parseEDTFDate(string $dateStr): void
 	{
@@ -69,9 +79,9 @@ class EDTFParser
 		
 		if ($pos === false) {
 			preg_match( static::$regexPattern, $dateStr, $singleDateArr );
-			static::$isItDatePair = FALSE;
-			static::$parsedEDTFArray = $singleDateArr;
-			static::$onlyDateArray = $singleDateArr;
+			static::$isItDatePair = FALSE;				
+			static::$parsedEDTFArray = array_map('strval', $singleDateArr);
+			static::$onlyDateArray = array_map('strval', $singleDateArr);
 		} else {			
 			$startDateStr = substr( $dateStr, 0, strrpos( $dateStr, '/' ) );
 			$endDateStr   = substr( $dateStr, strrpos( $dateStr, '/' ) + 1 );
@@ -137,7 +147,25 @@ class EDTFParser
 	
 	public static function getOnlyDate(): EDTFDateTime {
 
-		if ( !EDTFParser::$isItDatePair ) {
+		if ( !EDTFParser::$isItDatePair ) {			
+
+			$second   = array_key_exists( 'second',   static::$onlyDateArray ) ? static::$onlyDateArray['second'] : '';
+			$minute   = array_key_exists( 'minute',   static::$onlyDateArray ) ? static::$onlyDateArray['minute'] : '';
+			$hour 	  = array_key_exists( 'hour',     static::$onlyDateArray ) ? static::$onlyDateArray['hour'] : '';
+			$daynum   = array_key_exists( 'daynum',   static::$onlyDateArray ) ? static::$onlyDateArray['daynum'] : '';
+			$monthnum = array_key_exists( 'monthnum', static::$onlyDateArray ) ? static::$onlyDateArray['monthnum'] : '';
+			$yearnum  = array_key_exists( 'yearnum',  static::$onlyDateArray ) ? static::$onlyDateArray['yearnum'] : '';
+			
+			$dateTime = new EDTFDateTime( 
+					$second,
+					$minute,
+					$hour,
+					$daynum,
+					$monthnum,
+					$yearnum
+				);
+			
+			/*
 			$dateTime = new EDTFDateTime( 
 					static::$onlyDateArray['second'],
 					static::$onlyDateArray['minute'],
@@ -145,7 +173,8 @@ class EDTFParser
 					static::$onlyDateArray['daynum'],
 					static::$onlyDateArray['monthnum'],
 					static::$onlyDateArray['yearnum']
-				);			
+				);
+			*/
 			return $dateTime;
 		} else {
 			$dateTime = new EDTFDateTime( 

@@ -1,9 +1,9 @@
 <?php
 
-require 'EDTFParser.php';
-require 'edtf/value/EDTFDateTime.php';
+require 'vendor/autoload.php';
 
 use EDTF\Value\EDTFDateTime as EDTFDateTime;
+use EDTF\EDTFParser as EDTFParser;
 
 
 $dateText = "1985-04-12T21:18:35/2011-07-11T23:51:47+01:32";

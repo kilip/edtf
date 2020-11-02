@@ -1,6 +1,8 @@
 <?php
 
-use EDTF\Value\EDTFDateTime as EDTFDateTime;
+namespace EDTF;
+
+use EDTF\EDTFDateTime as EDTFDateTime;
 
 class EDTFParser
 {

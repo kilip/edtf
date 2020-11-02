@@ -1,6 +1,6 @@
 <?php
 
-namespace EDTF\Value;
+namespace EDTF;
 
 final class EDTFDateTime
 {

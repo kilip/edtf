@@ -67,7 +67,7 @@ class EDTFParser
 			return array( $startDateArr , $endDateArr);						
 		}
 
-		return NULL;
+		return array();
 	}
 	
 }

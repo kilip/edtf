@@ -13,8 +13,7 @@ class EDTFParserTest extends TestCase {
 	public function testFullDateAndTime() {	
 		$dateText = "1985-04-12T23:20:30";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(30,	  $obj->getSecond() );		
 		$this->assertEquals(20,	  $obj->getMinute() );
 		$this->assertEquals(23,	  $obj->getHour() );
@@ -23,14 +22,12 @@ class EDTFParserTest extends TestCase {
 		$this->assertEquals(1985, $obj->getYear() );
 	}
 
-
-	/* EDTF L0 TESTS START */
+	/*===============EDTF L0 TESTS START===============*/
 	
 	public function testL0DateComplete() {
 		$dateText = "1985-04-12T23:20:30";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(12,	  $obj->getDay() );
 		$this->assertEquals(04,	  $obj->getMonth() );
 		$this->assertEquals(1985, $obj->getYear() );				
@@ -39,8 +36,7 @@ class EDTFParserTest extends TestCase {
 	public function testL0DateMonth() {
 		$dateText = "1985-04";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(04,	  $obj->getMonth() );
 		$this->assertEquals(1985, $obj->getYear() );				
 	}
@@ -48,24 +44,21 @@ class EDTFParserTest extends TestCase {
 	public function testL0DateYear() {
 		$dateText = "1985";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(1985, $obj->getYear() );				
 	}
 
 	public function testL0DateNegativeYear() {
 		$dateText = "-1985";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(-1985, $obj->getYear() );				
 	}
 
 	public function testL0DateYear0() {
 		$dateText = "0000";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(0000, $obj->getYear() );				
 	}
 	
@@ -73,8 +66,7 @@ class EDTFParserTest extends TestCase {
 	public function testL0DateTime1() {
 		$dateText = "2013-02-03T09:30:01";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(01,	  $obj->getSecond() );		
 		$this->assertEquals(30,	  $obj->getMinute() );
 		$this->assertEquals(9,	  $obj->getHour() );
@@ -87,8 +79,7 @@ class EDTFParserTest extends TestCase {
 	public function testL0DateTime2() {
 		$dateText = "2004-01-01T10:10:10Z";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals('Z',  $obj->getTzutc() );
 		$this->assertEquals(10,	  $obj->getSecond() );		
 		$this->assertEquals(10,	  $obj->getMinute() );
@@ -101,8 +92,7 @@ class EDTFParserTest extends TestCase {
 	public function testL0DateTime3() {
 		$dateText = "2004-01-01T10:10:10+05:13";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
+		$obj = EDTFParser::getOnlyDate();		
 		$this->assertEquals(13,   $obj->getTzminute() );
 		$this->assertEquals(5,    $obj->getTzhour() );
 		$this->assertEquals(10,	  $obj->getSecond() );		
@@ -113,38 +103,72 @@ class EDTFParserTest extends TestCase {
 		$this->assertEquals(2004, $obj->getYear() );
 	}
 
-	public function testL0Interval1() {
-		/*
+	public function testL0Interval1() {		
 		$dateText = "1964/2008";
 		EDTFParser::parseEDTFDate( $dateText );
-		$obj = EDTFParser::getOnlyDate();
-		
-		$this->assertEquals(13,   $obj->getTzminute() );
-		$this->assertEquals(5,    $obj->getTzhour() );
-		$this->assertEquals(10,	  $obj->getSecond() );		
-		$this->assertEquals(10,	  $obj->getMinute() );
-		$this->assertEquals(10,	  $obj->getHour() );
-		$this->assertEquals(1,	  $obj->getDay() );
-		$this->assertEquals(1,	  $obj->getMonth() );
-		$this->assertEquals(2004, $obj->getYear() );
-		*/		
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();		
+		$this->assertEquals(1964, $startDate->getYear() );
+		$this->assertEquals(2008, $endDate->getYear() );		
 	}
 
-/*
-	[TestFixture()] public class TestL0Interval {
+	public function testL0Interval2() {		
+		$dateText = "2004-06/2006-08";
+		EDTFParser::parseEDTFDate( $dateText );
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();		
+		$this->assertEquals(2004, $startDate->getYear() );
+		$this->assertEquals(6,	  $startDate->getMonth() );
+		$this->assertEquals(2006, $endDate->getYear() );
+		$this->assertEquals(8,	  $endDate->getMonth() );		
+	}
 
-		[Test] public void TestL0Interval1() {
-			const string DateString = "1964/2008";
-			var TestDate = Edtf.DatePair.Parse(DateString);
-			Assert.AreEqual(1964, TestDate.StartValue.Year.Value);	
-			Assert.AreEqual(2008, TestDate.EndValue.Year.Value);
-			Assert.AreEqual(DateStatus.Normal, TestDate.StartValue.Status);
-			Assert.AreEqual(DateStatus.Normal, TestDate.EndValue.Status);
-			Assert.AreEqual(false, TestDate.IsRange);
-			Assert.AreEqual(DateString, TestDate.ToString());
-		}
-*/
+	public function testL0Interval3() {
+		$dateText = "2004-02-01/2005-02-08";
+		EDTFParser::parseEDTFDate( $dateText );
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();	
+		$this->assertEquals(2004, $startDate->getYear() );
+		$this->assertEquals(2,	  $startDate->getMonth() );
+		$this->assertEquals(1,	  $startDate->getDay() );
+		$this->assertEquals(2005, $endDate->getYear() );
+		$this->assertEquals(2,	  $endDate->getMonth() );
+		$this->assertEquals(8,	  $endDate->getDay() );
+	}
+
+	public function testL0Interval4() {
+		$dateText = "2004-02-01/2005-02";
+		EDTFParser::parseEDTFDate( $dateText );
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();	
+		$this->assertEquals(2004, $startDate->getYear() );
+		$this->assertEquals(2,	  $startDate->getMonth() );
+		$this->assertEquals(1,	  $startDate->getDay() );
+		$this->assertEquals(2005, $endDate->getYear() );
+		$this->assertEquals(2,	  $endDate->getMonth() );
+	}
+
+	public function testL0Interval5() {
+		$dateText = "2004-02-01/2005";
+		EDTFParser::parseEDTFDate( $dateText );
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();	
+		$this->assertEquals(2004, $startDate->getYear() );
+		$this->assertEquals(2,	  $startDate->getMonth() );
+		$this->assertEquals(1,	  $startDate->getDay() );
+		$this->assertEquals(2005, $endDate->getYear() );
+	}
+
+	public function testL0Interval6() {
+		$dateText = "2005/2006-02";
+		EDTFParser::parseEDTFDate( $dateText );
+		$startDate = EDTFParser::getStartDate();
+		$endDate = EDTFParser::getEndDate();	
+		$this->assertEquals(2005, $startDate->getYear() );
+		$this->assertEquals(2,	  $endDate->getMonth() );
+		$this->assertEquals(2006, $endDate->getYear() );
+	}	
 	
-	/* EDTF L0 TESTS END */
+	/*===============EDTF L0 TESTS END===============*/
 	
 }

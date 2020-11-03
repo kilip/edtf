@@ -48,8 +48,8 @@ class EDTFParser
 						(?>T # Literal T
 						(?<hour>2[0-3]|[01][0-9]):					
 						(?<minute>[0-5][0-9]):					
-						(?<second>[0-5][0-9])(?>					
-						(?<tzutc>Z)|					
+						(?<second>[0-5][0-9])
+						(?>(?<tzutc>Z)|					
 						(?<tzsign>[+-])					
 						(?<tzhour>[01][0-9]):					
 						(?<tzminute>[0-5][0-9]))?)?)?)?$
@@ -218,4 +218,5 @@ class EDTFParser
 		}
 		return $dateTime;		
 	}
+	
 }

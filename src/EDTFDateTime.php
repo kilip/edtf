@@ -67,5 +67,6 @@ final class EDTFDateTime
         return $this->startYear === $EDTFDateTime->startYear
             && $this->endYear === $EDTFDateTime->endYear;
     }
-*/	
+*/
+
 }

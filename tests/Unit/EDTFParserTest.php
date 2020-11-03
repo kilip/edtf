@@ -97,6 +97,21 @@ class EDTFParserTest extends TestCase {
 		$this->assertEquals(1,	  $obj->getMonth() );
 		$this->assertEquals(2004, $obj->getYear() );
 	}	
+
+	public function testL0DateTime3() {
+		$dateText = "2004-01-01T10:10:10+05:13";
+		EDTFParser::parseEDTFDate( $dateText );
+		$obj = EDTFParser::getOnlyDate();
+		
+		$this->assertEquals(13,   $obj->getTzminute() );
+		$this->assertEquals(5,    $obj->getTzhour() );
+		$this->assertEquals(10,	  $obj->getSecond() );		
+		$this->assertEquals(10,	  $obj->getMinute() );
+		$this->assertEquals(10,	  $obj->getHour() );
+		$this->assertEquals(1,	  $obj->getDay() );
+		$this->assertEquals(1,	  $obj->getMonth() );
+		$this->assertEquals(2004, $obj->getYear() );
+	}
 	
 	/* EDTF L0 TESTS END */
 	

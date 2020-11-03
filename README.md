@@ -1,9 +1,16 @@
-# PHP Library Template
+# EDTF Parser Library
 
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ProfessionalWiki/EDTF/CI)](https://github.com/ProfessionalWiki/EDTF/actions?query=workflow%3ACI)
 [![Type Coverage](https://shepherd.dev/github/ProfessionalWiki/EDTF/coverage.svg)](https://shepherd.dev/github/ProfessionalWiki/EDTF)
 
-This is a template for starting new PHP libraries. Copy or fork to get started quickly.
+The Extended Date/Time Format (EDTF) was created by the Library of Congress with the participation and support of the bibliographic
+community as well as communities with related interests.
+
+It defines features to be supported in a date/time string, features considered useful for a wide variety of applications.
+
+You can find more information about EDTF standart here:
+
+https://www.loc.gov/standards/datetime/
 
 ## Usage
 

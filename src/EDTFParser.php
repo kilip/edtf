@@ -96,17 +96,34 @@ class EDTFParser
 	public static function getStartDate(): EDTFDateTime {
 
 		if ( EDTFParser::$isItDatePair ) {
+			
+			$second   = array_key_exists( 'second',   static::$startDateArray ) ? static::$startDateArray['second'] : '';
+			$minute   = array_key_exists( 'minute',   static::$startDateArray ) ? static::$startDateArray['minute'] : '';
+			$hour 	  = array_key_exists( 'hour',     static::$startDateArray ) ? static::$startDateArray['hour'] : '';
+			$daynum   = array_key_exists( 'daynum',   static::$startDateArray ) ? static::$startDateArray['daynum'] : '';
+			$monthnum = array_key_exists( 'monthnum', static::$startDateArray ) ? static::$startDateArray['monthnum'] : '';
+			$yearnum  = array_key_exists( 'yearnum',  static::$startDateArray ) ? static::$startDateArray['yearnum'] : '';			
+			$tzhour   = array_key_exists( 'tzhour',   static::$startDateArray ) ? static::$startDateArray['tzhour'] : '';
+			$tzminute = array_key_exists( 'tzminute', static::$startDateArray ) ? static::$startDateArray['tzminute'] : '';
+			$tzutc    = array_key_exists( 'tzutc',    static::$startDateArray ) ? static::$startDateArray['tzutc'] : '';
+			
 			$dateTime = new EDTFDateTime( 
-					static::$startDateArray['second'],
-					static::$startDateArray['minute'],
-					static::$startDateArray['hour'],
-					static::$startDateArray['daynum'],
-					static::$startDateArray['monthnum'],
-					static::$startDateArray['yearnum']
+					$tzutc,
+					$tzminute,
+					$tzhour,
+					$second,
+					$minute,
+					$hour,
+					$daynum,
+					$monthnum,
+					$yearnum
 				);			
 			return $dateTime;
 		} else {
 			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
 				'',
 				'',
 				'',
@@ -116,22 +133,39 @@ class EDTFParser
 			);			
 		}
 		return $dateTime;		
-	}	
+	}
 
 	public static function getEndDate(): EDTFDateTime {
 
 		if ( EDTFParser::$isItDatePair ) {
+			
+			$second   = array_key_exists( 'second',   static::$endDateArray ) ? static::$endDateArray['second'] : '';
+			$minute   = array_key_exists( 'minute',   static::$endDateArray ) ? static::$endDateArray['minute'] : '';
+			$hour 	  = array_key_exists( 'hour',     static::$endDateArray ) ? static::$endDateArray['hour'] : '';
+			$daynum   = array_key_exists( 'daynum',   static::$endDateArray ) ? static::$endDateArray['daynum'] : '';
+			$monthnum = array_key_exists( 'monthnum', static::$endDateArray ) ? static::$endDateArray['monthnum'] : '';
+			$yearnum  = array_key_exists( 'yearnum',  static::$endDateArray ) ? static::$endDateArray['yearnum'] : '';			
+			$tzhour   = array_key_exists( 'tzhour',   static::$endDateArray ) ? static::$endDateArray['tzhour'] : '';
+			$tzminute = array_key_exists( 'tzminute', static::$endDateArray ) ? static::$endDateArray['tzminute'] : '';
+			$tzutc    = array_key_exists( 'tzutc',    static::$endDateArray ) ? static::$endDateArray['tzutc'] : '';
+			
 			$dateTime = new EDTFDateTime( 
-					static::$endDateArray['second'],
-					static::$endDateArray['minute'],
-					static::$endDateArray['hour'],
-					static::$endDateArray['daynum'],
-					static::$endDateArray['monthnum'],
-					static::$endDateArray['yearnum']
+					$tzutc,
+					$tzminute,
+					$tzhour,
+					$second,
+					$minute,
+					$hour,
+					$daynum,
+					$monthnum,
+					$yearnum
 				);			
 			return $dateTime;
 		} else {
 			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
 				'',
 				'',
 				'',
@@ -171,6 +205,9 @@ class EDTFParser
 			return $dateTime;
 		} else {
 			$dateTime = new EDTFDateTime( 
+				'',
+				'',
+				'',
 				'',
 				'',
 				'',

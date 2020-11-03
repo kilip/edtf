@@ -68,6 +68,12 @@ file that just defines a dependency on UPDATE_NAME 1.x:
     }
 }
 ```
+## Todo
+
+* Implement parser functionality for EDTF Level 1
+* Write and run unit tests for Level 1
+* Implement parser functionality for EDTF Level 2
+* Write and run unit tests for Level 2
 
 ## Development
 

@@ -31,10 +31,12 @@ echo "ONLY DATE:\n";
 echo EDTFParser::getOnlyDate();
 */
 
-$dateText = "1985-04";
+//$dateText = "1985-04";
 //$dateText = "1985-04-12T21:18:35";
+$dateText = "2004-01-01T10:10:10Z";
 echo "===> DATE TEXT:\n$dateText\n";
 echo "========\n";
 EDTFParser::parseEDTFDate( $dateText );
+// print_r( EDTFParser::$parsedEDTFArray );
 echo "ONLY DATE:\n";
 echo EDTFParser::getOnlyDate();

@@ -41,10 +41,11 @@ class EDTFParser
 						(?<day>
 						(?<dayopenparens>\(+)?
 						(?<daynum>(?>[012u][0-9u]|3[01u])))
-						(?<dayend>[)~?]*)(?>T
+						(?<dayend>[)~?]*)
 					# Day end
 					
-					# Others start #					
+					# Others start #
+						(?>T # Literal T
 						(?<hour>2[0-3]|[01][0-9]):					
 						(?<minute>[0-5][0-9]):					
 						(?<second>[0-5][0-9])(?>					
@@ -72,11 +73,9 @@ class EDTFParser
 	
 	
 	public static function parseEDTFDate(string $dateStr): void
-	{
-		
+	{		
 		$dateDelimiter = "/";
-		$pos = strpos($dateStr, $dateDelimiter);
-		
+		$pos = strpos($dateStr, $dateDelimiter);	
 		if ($pos === false) {
 			preg_match( static::$regexPattern, $dateStr, $singleDateArr );
 			static::$isItDatePair = FALSE;				
@@ -84,8 +83,7 @@ class EDTFParser
 			static::$onlyDateArray = array_map('strval', $singleDateArr);
 		} else {			
 			$startDateStr = substr( $dateStr, 0, strrpos( $dateStr, '/' ) );
-			$endDateStr   = substr( $dateStr, strrpos( $dateStr, '/' ) + 1 );
-			
+			$endDateStr   = substr( $dateStr, strrpos( $dateStr, '/' ) + 1 );			
 			preg_match( static::$regexPattern, $startDateStr, $startDateArr );
 			preg_match( static::$regexPattern, $endDateStr, $endDateArr );
 			static::$isItDatePair = TRUE;
@@ -154,27 +152,22 @@ class EDTFParser
 			$hour 	  = array_key_exists( 'hour',     static::$onlyDateArray ) ? static::$onlyDateArray['hour'] : '';
 			$daynum   = array_key_exists( 'daynum',   static::$onlyDateArray ) ? static::$onlyDateArray['daynum'] : '';
 			$monthnum = array_key_exists( 'monthnum', static::$onlyDateArray ) ? static::$onlyDateArray['monthnum'] : '';
-			$yearnum  = array_key_exists( 'yearnum',  static::$onlyDateArray ) ? static::$onlyDateArray['yearnum'] : '';
+			$yearnum  = array_key_exists( 'yearnum',  static::$onlyDateArray ) ? static::$onlyDateArray['yearnum'] : '';			
+			$tzhour   = array_key_exists( 'tzhour',   static::$onlyDateArray ) ? static::$onlyDateArray['tzhour'] : '';
+			$tzminute = array_key_exists( 'tzminute', static::$onlyDateArray ) ? static::$onlyDateArray['tzminute'] : '';
+			$tzutc    = array_key_exists( 'tzutc',    static::$onlyDateArray ) ? static::$onlyDateArray['tzutc'] : '';
 			
-			$dateTime = new EDTFDateTime( 
+			$dateTime = new EDTFDateTime(
+					$tzutc,
+					$tzminute,
+					$tzhour,
 					$second,
 					$minute,
 					$hour,
 					$daynum,
 					$monthnum,
 					$yearnum
-				);
-			
-			/*
-			$dateTime = new EDTFDateTime( 
-					static::$onlyDateArray['second'],
-					static::$onlyDateArray['minute'],
-					static::$onlyDateArray['hour'],
-					static::$onlyDateArray['daynum'],
-					static::$onlyDateArray['monthnum'],
-					static::$onlyDateArray['yearnum']
-				);
-			*/
+				);			
 			return $dateTime;
 		} else {
 			$dateTime = new EDTFDateTime( 

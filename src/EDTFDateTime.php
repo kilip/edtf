@@ -5,6 +5,9 @@ namespace EDTF;
 final class EDTFDateTime
 {
 	
+	private $tzutc;
+	private $tzminute;
+	private $tzhour;
     private $second;
     private $minute;
     private $hour;
@@ -13,6 +16,9 @@ final class EDTFDateTime
     private $year;
  
 	public function __construct(
+		string $tzutc,
+		string $tzminute,
+		string $tzhour,
 		string $second,
 		string $minute,
 		string $hour,
@@ -20,14 +26,20 @@ final class EDTFDateTime
 		string $month,
 		string $year)
 	{		
-		$this->second = $second;
-		$this->minute = $minute;	
-		$this->hour   = $hour;	
-		$this->day    = $day;
-		$this->month  = $month;
-		$this->year   = $year;	
+		$this->tzutc    = $tzutc;
+		$this->tzminute = $tzminute;
+		$this->tzhour   = $tzhour;
+		$this->second   = $second;
+		$this->minute   = $minute;	
+		$this->hour     = $hour;	
+		$this->day      = $day;
+		$this->month    = $month;
+		$this->year     = $year;	
     }
-  
+  	
+	public function getTzutc(): string { return $this->tzutc;}
+	public function getTzminute(): string { return $this->tzminute;}
+	public function getTzhour(): string { return $this->tzhour;}
 	public function getSecond(): string { return $this->second;}
 	public function getMinute(): string {return $this->minute;}
 	public function getHour(): string {return $this->hour;}
@@ -36,13 +48,16 @@ final class EDTFDateTime
 	public function getYear(): string {return $this->year;}
 	
 	public function __toString() {
-		return
-			"Second:" . $this->second . "\n" .
-			"Minute:" . $this->minute . "\n" .
-			"Hour:"   . $this->hour . "\n" .
-			"Day:"    . $this->day . "\n" .
-			"Month:"  . $this->month . "\n" .
-			"Year:"   . $this->year . "\n"
+		return			
+			"TZUTC:" . $this->tzutc . "\n" .
+			"TZMinute:" . $this->tzminute . "\n" .
+			"TZHour:"   . $this->tzhour . "\n" .
+			"Second:"   . $this->second . "\n" .
+			"Minute:"   . $this->minute . "\n" .
+			"Hour:"     . $this->hour . "\n" .
+			"Day:"      . $this->day . "\n" .
+			"Month:"    . $this->month . "\n" .
+			"Year:"     . $this->year . "\n"
 			;
 	}
 

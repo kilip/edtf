@@ -8,6 +8,7 @@ namespace EDTF\Tests\Unit;
 use EDTF\ExtDateTime;
 use EDTF\Interval;
 use EDTF\Parser;
+use EDTF\Season;
 
 trait FactoryTrait
 {
@@ -19,5 +20,10 @@ trait FactoryTrait
     public function createInterval(string $data): Interval
     {
         return (new Parser())->createInterval($data);
+    }
+
+    public function createSeason(string $data): Season
+    {
+        return (new Parser())->createExtDateTime($data);
     }
 }

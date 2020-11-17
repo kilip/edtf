@@ -7,6 +7,12 @@ namespace EDTF;
 
 use EDTF\Contracts\DateTimeInterface;
 
+/**
+ * Class Parser
+ *
+ * @TODO: add a way to handle invalid data format`
+ * @package EDTF
+ */
 class Parser
 {
     private string $regexPattern = "/(?x) # Turns on free spacing mode for easier readability
@@ -60,7 +66,7 @@ class Parser
 
     public function parse(string $data): DateTimeInterface
     {
-        if (false !== strpos($data, '/')) {
+        if (false !== strpos($data, '/') || false !== strpos($data, 'X')) {
             return $this->createInterval($data);
         }
         return $this->createExtDateTime($data);
@@ -88,10 +94,8 @@ class Parser
         return $interval;
     }
 
-    public function createExtDateTime(string $data, bool $isInterval = false): ExtDateTime
+    public function createExtDateTime(string $data, bool $isInterval = false): object
     {
-        //@TODO: add a way to validate and handle invalid $data format
-
         $regexPattern = $this->regexPattern;
         $dateTime = new ExtDateTime();
 
@@ -102,9 +106,14 @@ class Parser
             $dateTime->setStatus(ExtDateTime::STATUS_OPEN);
         }else{
             preg_match($regexPattern, $data, $matches);
-            $dateTime->fromRegexMatches($matches);
-            $dateTime->setStatus(ExtDateTime::STATUS_NORMAL);
-            $this->setDateQualification($data, $dateTime);
+
+            if(isset($matches['monthNum']) && (int)$matches['monthNum'] > 12){
+                $dateTime = new Season((int)$matches['yearNum'], (int)$matches['monthNum']);
+            }else{
+                $dateTime->fromRegexMatches($matches);
+                $dateTime->setStatus(ExtDateTime::STATUS_NORMAL);
+                $this->setDateQualification($data, $dateTime);
+            }
         }
 
         return $dateTime;

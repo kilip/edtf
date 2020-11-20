@@ -30,7 +30,7 @@ trait FactoryTrait
         return EDTF::createInterval($data);
     }
 
-    private function parse($data): Parser
+    public function parse($data): Parser
     {
         $parser = new Parser();
         $parser->parse($data);

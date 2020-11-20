@@ -46,9 +46,9 @@ class EDTF
     public static function createExtDateTime(Parser $parser): ExtDateTime
     {
         return new ExtDateTime(
-            $parser->getYear(),
-            $parser->getMonth(),
-            $parser->getDay(),
+            $parser->getYearNum(),
+            $parser->getMonthNum(),
+            $parser->getDayNum(),
             $parser->getHour(),
             $parser->getMinute(),
             $parser->getSecond(),
@@ -60,7 +60,7 @@ class EDTF
 
     public static function createExtDate(Parser $parser): ExtDate
     {
-        return new ExtDate($parser->getYear(), $parser->getMonth(), $parser->getDay());
+        return new ExtDate($parser->getYearNum(), $parser->getMonthNum(), $parser->getDayNum());
     }
 
     private static function createIntervalPair(string $data): ExtDate

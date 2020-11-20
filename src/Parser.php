@@ -11,7 +11,7 @@ class Parser
 
 					# Year start
 						(?<year>
-						    (?<yearOpenFlags>[~?%]{0,2})
+						    (?<yearOpenFlag>[~?%]{0,2})
 							(?<yearNum>[+-]?(?:\d+e\d+|[0-9u][0-9ux]*))
 							(?>S # Literal S letter. It is for the significant digit indicator
 							(?<yearPrecision>\d+))?
@@ -22,25 +22,27 @@ class Parser
 					(?>- # Literal - (hyphen)
 
 					# Month start
-						(?<month>
-							(?<monthOpenParents>\(+)?
+                        (?<month>
+                            (?<monthOpenFlag>[~?%]{0,2})
+                            (?<monthOpenParents>\(+)?
 							(?<monthNum>
 								(?>1[0-9u]|[0u][0-9u]|2[1-4])
 							)
 							(?>\^
 								(?<seasonQualifier>[\P{L}\P{N}\P{M}:.-]+)
-							)?
+                            )?
+                            (?<monthCloseFlag>[~?%]{0,2})
 						)
-
-						(?<monthEnd>(?:\)?[~?]{0,2}){0,2})
 					# Month end
 
 					(?>- # Literal - (hyphen)
 
 					# Day start
 						(?<day>
+						(?<dayOpenFlag>[~?%]{0,2})
 						(?<dayOpenParents>\(+)?
 						(?<dayNum>(?>[012u][0-9u]|3[01u])))
+						(?<dayCloseFlag>[~?%]{0,2})
 						(?<dayEnd>[)~%?]*)
 					# Day end
 
@@ -56,13 +58,20 @@ class Parser
 					# Others end #
 					/";
 
-
-    private ?int $year = null;
-    private ?int $month = null;
-    private ?int $day = null;
+    private ?int $yearNum = null;
+    private ?int $monthNum = null;
+    private ?int $dayNum = null;
     private ?int $hour = null;
     private ?int $minute = null;
     private ?int $second = null;
+    private ?int $season = null;
+
+    private ?string $yearOpenFlag = null;
+    private ?string $yearCloseFlag = null;
+    private ?string $monthOpenFlag = null;
+    private ?string $monthCloseFlag = null;
+    private ?string $dayOpenFlag = null;
+    private ?string $dayCloseFlag = null;
 
     private ?string $tzSign = null;
     private ?int $tzMinute = null;
@@ -71,7 +80,16 @@ class Parser
 
     public function parse(string $data): object
     {
-        $stringTypes = ['tzUtc', 'tzSign'];
+        $stringTypes = [
+            'tzUtc',
+            'tzSign',
+            'yearOpenFlag',
+            'yearCloseFlag',
+            'monthOpenFlag',
+            'monthCloseFlag',
+            'dayOpenFlag',
+            'dayCloseFlag'
+        ];
 
         preg_match($this->regexPattern, $data, $matches);
 
@@ -91,7 +109,47 @@ class Parser
             $this->$name = $value;
         }
 
+        // convert month into season
+        if($this->monthNum > 12){
+            $this->monthNum = null;
+            $this->season = (int)$matches['monthNum'];
+        }
         return $this;
+    }
+
+    public function getSeason(): ?int
+    {
+        return $this->season;
+    }
+
+    public function getYearOpenFlag(): ?string
+    {
+        return $this->yearOpenFlag;
+    }
+
+    public function getYearCloseFlag(): ?string
+    {
+        return $this->yearCloseFlag;
+    }
+
+    public function getMonthOpenFlag(): ?string
+    {
+        return $this->monthOpenFlag;
+    }
+
+    public function getMonthCloseFlag(): ?string
+    {
+        return $this->monthCloseFlag;
+    }
+
+    public function getDayOpenFlag(): ?string
+    {
+        return $this->dayOpenFlag;
+    }
+
+    public function getDayCloseFlag(): ?string
+    {
+        return $this->dayCloseFlag;
     }
 
     public function getTzUtc(): ?string
@@ -99,19 +157,19 @@ class Parser
         return $this->tzUtc;
     }
 
-    public function getYear(): ?int
+    public function getYearNum(): ?int
     {
-        return $this->year;
+        return $this->yearNum;
     }
 
-    public function getMonth(): ?int
+    public function getMonthNum(): ?int
     {
-        return $this->month;
+        return $this->monthNum;
     }
 
-    public function getDay(): ?int
+    public function getDayNum(): ?int
     {
-        return $this->day;
+        return $this->dayNum;
     }
 
     public function getHour(): ?int

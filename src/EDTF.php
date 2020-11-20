@@ -60,13 +60,18 @@ class EDTF
 
     public static function createExtDate(Parser $parser): ExtDate
     {
-        return new ExtDate($parser->getYearNum(), $parser->getMonthNum(), $parser->getDayNum());
+        $q = new Qualification(
+            $parser->getYearQualification(),
+            $parser->getMonthQualification(),
+            $parser->getDayQualification()
+        );
+        return new ExtDate($parser->getYearNum(), $parser->getMonthNum(), $parser->getDayNum(), $q, null, $parser->getIntervalType());
     }
 
     private static function createIntervalPair(string $data): ExtDate
     {
         $parser = new Parser();
-        $parser->parse($data);
+        $parser->parse($data, true);
         return static::createExtDate($parser);
     }
 }

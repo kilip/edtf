@@ -6,6 +6,7 @@ namespace EDTF\Tests\Unit;
 
 
 use EDTF\Parser;
+use EDTF\Qualification;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -98,22 +99,22 @@ class ParserTest extends TestCase
     {
         $parser = $this->parse('?1984');
         $this->assertSame(1984, $parser->getYearNum());
-        $this->assertSame("?", $parser->getYearOpenFlag());
+        $this->assertSame(Qualification::UNCERTAIN, $parser->getYearQualification());
 
         $parser = $this->parse('1984?');
         $this->assertSame(1984, $parser->getYearNum());
-        $this->assertSame("?", $parser->getYearCloseFlag());
+        $this->assertSame(Qualification::UNCERTAIN, $parser->getYearQualification());
     }
 
     public function testShouldParseQualificationWithinMonth()
     {
         $parser = $this->parse("1984-%02");
         $this->assertSame(2, $parser->getMonthNum());
-        $this->assertSame("%", $parser->getMonthOpenFlag());
+        $this->assertSame(Qualification::UNCERTAIN_AND_APPROXIMATE, $parser->getMonthQualification());
 
         $parser = $this->parse("1984-02~");
         $this->assertSame(2, $parser->getMonthNum());
-        $this->assertSame("~", $parser->getMonthCloseFlag());
+        $this->assertSame(Qualification::APPROXIMATE, $parser->getMonthQualification());
     }
 
     public function testShouldParseQualificationWithinDay()
@@ -121,11 +122,11 @@ class ParserTest extends TestCase
         $parser = $this->parse("1984-02-~01");
         $this->assertSame(2, $parser->getMonthNum());
         $this->assertSame(1, $parser->getDayNum());
-        $this->assertSame("~", $parser->getDayOpenFlag());
+        $this->assertSame(Qualification::APPROXIMATE, $parser->getDayQualification());
 
         $parser = $this->parse("1984-02-01%");
         $this->assertSame(2, $parser->getMonthNum());
         $this->assertSame(1, $parser->getDayNum());
-        $this->assertSame("%", $parser->getDayCloseFlag());
+        $this->assertSame(Qualification::UNCERTAIN_AND_APPROXIMATE, $parser->getDayQualification());
     }
 }

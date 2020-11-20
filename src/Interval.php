@@ -8,6 +8,10 @@ use EDTF\Contracts\ExtDateInterface;
 
 class Interval implements ExtDateInterface
 {
+    const NORMAL    = 0;
+    const OPEN      = 1;
+    const UNKNOWN   = 2;
+
     private ?ExtDate $start = null;
     private ?ExtDate $end = null;
 

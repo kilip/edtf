@@ -66,29 +66,32 @@ class Parser
     private ?int $second = null;
     private ?int $season = null;
 
-    private ?string $yearOpenFlag = null;
-    private ?string $yearCloseFlag = null;
-    private ?string $monthOpenFlag = null;
-    private ?string $monthCloseFlag = null;
-    private ?string $dayOpenFlag = null;
-    private ?string $dayCloseFlag = null;
+    private int $yearQualification = 0;
+    private int $monthQualification = 0;
+    private int $dayQualification = 0;
 
     private ?string $tzSign = null;
     private ?int $tzMinute = null;
     private ?int $tzHour = null;
     private ?string $tzUtc = null;
 
-    public function parse(string $data): object
+    private int $intervalType = 0;
+
+    public function parse(string $data, bool $intervalMode = false): object
     {
+        if($intervalMode && "" === $data){
+            $this->intervalType = Interval::UNKNOWN;
+            return $this;
+        }
+
+        if($intervalMode && ".." === $data) {
+            $this->intervalType = Interval::OPEN;
+            return $this;
+        }
+
         $stringTypes = [
             'tzUtc',
             'tzSign',
-            'yearOpenFlag',
-            'yearCloseFlag',
-            'monthOpenFlag',
-            'monthCloseFlag',
-            'dayOpenFlag',
-            'dayCloseFlag'
         ];
 
         preg_match($this->regexPattern, $data, $matches);
@@ -114,42 +117,61 @@ class Parser
             $this->monthNum = null;
             $this->season = (int)$matches['monthNum'];
         }
+
+        $this->yearQualification = $this->configureQualification($matches, 'yearOpenFlag', 'yearCloseFlag');
+        $this->monthQualification = $this->configureQualification($matches, 'monthOpenFlag', 'monthCloseFlag');
+        $this->dayQualification = $this->configureQualification($matches, 'dayOpenFlag', 'dayCloseFlag');
+
         return $this;
+    }
+
+    private function configureQualification(array $matches, string $openFlag, string $closeFlag): int
+    {
+        if(isset($matches[$openFlag]) && $matches[$openFlag] !== ""){
+            return $this->getQualificationValue((string)$matches[$openFlag]);
+        }elseif(isset($matches[$closeFlag]) && $matches[$closeFlag] !== ""){
+            return $this->getQualificationValue((string)$matches[$closeFlag]);
+        }
+        return Qualification::UNDEFINED;
+    }
+
+    private function getQualificationValue(string $value): int
+    {
+        if('?' === $value){
+            return Qualification::UNCERTAIN;
+        }elseif('~' === $value){
+            return Qualification::APPROXIMATE;
+        }elseif('%' === $value){
+            return Qualification::UNCERTAIN_AND_APPROXIMATE;
+        }
+        throw new \InvalidArgumentException(sprintf(
+            'Invalid qualification flag "%s".', $value
+        ));
+    }
+
+    public function getIntervalType(): int
+    {
+        return $this->intervalType;
+    }
+
+    public function getYearQualification(): int
+    {
+        return $this->yearQualification;
+    }
+
+    public function getMonthQualification(): int
+    {
+        return $this->monthQualification;
+    }
+
+    public function getDayQualification(): int
+    {
+        return $this->dayQualification;
     }
 
     public function getSeason(): ?int
     {
         return $this->season;
-    }
-
-    public function getYearOpenFlag(): ?string
-    {
-        return $this->yearOpenFlag;
-    }
-
-    public function getYearCloseFlag(): ?string
-    {
-        return $this->yearCloseFlag;
-    }
-
-    public function getMonthOpenFlag(): ?string
-    {
-        return $this->monthOpenFlag;
-    }
-
-    public function getMonthCloseFlag(): ?string
-    {
-        return $this->monthCloseFlag;
-    }
-
-    public function getDayOpenFlag(): ?string
-    {
-        return $this->dayOpenFlag;
-    }
-
-    public function getDayCloseFlag(): ?string
-    {
-        return $this->dayCloseFlag;
     }
 
     public function getTzUtc(): ?string

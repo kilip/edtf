@@ -23,10 +23,15 @@ class EDTFTest extends TestCase
         $this->assertInstanceOf(Interval::class, EDTF::from('2016/2019'));
     }
 
-    public function testThrowExceptionWhenCreatingEdtfFromEmptyString()
+    public function testThrowExceptionWhenWithEmptyString()
     {
         $this->expectException(\InvalidArgumentException::class);
-
         EDTF::from("");
+    }
+
+    public function testThrowExceptionWithInvalidInputFormat()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        EDTF::from("foo");
     }
 }

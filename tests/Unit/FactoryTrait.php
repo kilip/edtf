@@ -10,9 +10,16 @@ use EDTF\ExtDate;
 use EDTF\ExtDateTime;
 use EDTF\Interval;
 use EDTF\Parser;
+use EDTF\Season;
 
 trait FactoryTrait
 {
+    public function createSeason(string $data): Season
+    {
+        $parser = $this->parse($data);
+        return new Season($parser->getYearNum(), $parser->getSeason());
+    }
+
     public function createExtDate(string $data): ExtDate
     {
         $parser = $this->parse($data);

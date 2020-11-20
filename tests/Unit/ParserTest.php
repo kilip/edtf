@@ -7,6 +7,7 @@ namespace EDTF\Tests\Unit;
 
 use EDTF\Parser;
 use EDTF\Qualification;
+use EDTF\UnspecifiedDigit;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -128,5 +129,45 @@ class ParserTest extends TestCase
         $this->assertSame(2, $parser->getMonthNum());
         $this->assertSame(1, $parser->getDayNum());
         $this->assertSame(Qualification::UNCERTAIN_AND_APPROXIMATE, $parser->getDayQualification());
+    }
+
+    public function testParseUnspecifiedDigitWithYearPrecision()
+    {
+        $parser = $this->parse('201X');
+        $this->assertSame(2010, $parser->getYearNum());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getYearUnspecified());
+
+        $parser = $this->parse('20XX');
+        $this->assertSame(2000, $parser->getYearNum());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getYearUnspecified());
+    }
+
+    public function testParseUnspecfiedDigitWithMonthPrecision()
+    {
+        $parser = $this->parse('2010-XX');
+        $this->assertSame(2010, $parser->getYearNum());
+        $this->assertNull($parser->getMonthNum());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getMonthUnspecified());
+    }
+
+    public function testParseUnspeficiedDigitWithDayPrecision()
+    {
+        $parser = $this->parse('2010-12-XX');
+        $this->assertSame(2010, $parser->getYearNum());
+        $this->assertSame(12, $parser->getMonthNum());
+        $this->assertNull($parser->getDayNum());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getDayUnspecified());
+    }
+
+    public function testParseUnspecifiedDigitWithMixedPrecision()
+    {
+        $parser = $this->parse("20XX-XX-XX");
+        $this->assertSame(2000, $parser->getYearNum());
+        $this->assertNull($parser->getMonthNum());
+        $this->assertNull($parser->getDayNum());
+
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getYearUnspecified());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getMonthUnspecified());
+        $this->assertSame(UnspecifiedDigit::UNSPECIFIED, $parser->getDayUnspecified());
     }
 }

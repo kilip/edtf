@@ -12,7 +12,7 @@ class Parser
 					# Year start
 						(?<year>
 						    (?<yearOpenFlag>[~?%]{0,2})
-							(?<yearNum>[+-]?(?:\d+e\d+|[0-9u][0-9ux]*))
+							(?<yearNum>[+-]?(?:\d+e\d+|[0-9u][0-9UX]*))
 							(?>S # Literal S letter. It is for the significant digit indicator
 							(?<yearPrecision>\d+))?
 							(?<yearCloseFlag>\)?[~%?]{0,2})
@@ -26,7 +26,7 @@ class Parser
                             (?<monthOpenFlag>[~?%]{0,2})
                             (?<monthOpenParents>\(+)?
 							(?<monthNum>
-								(?>1[0-9u]|[0u][0-9u]|2[1-4])
+								(?>1[0-9u]|[0UX][0-9UX]|2[1-4])
 							)
 							(?>\^
 								(?<seasonQualifier>[\P{L}\P{N}\P{M}:.-]+)
@@ -41,7 +41,7 @@ class Parser
 						(?<day>
 						(?<dayOpenFlag>[~?%]{0,2})
 						(?<dayOpenParents>\(+)?
-						(?<dayNum>(?>[012u][0-9u]|3[01u])))
+						(?<dayNum>(?>[012UX][0-9UX]|3[01UX])))
 						(?<dayCloseFlag>[~?%]{0,2})
 						(?<dayEnd>[)~%?]*)
 					# Day end
@@ -61,6 +61,7 @@ class Parser
     private ?int $yearNum = null;
     private ?int $monthNum = null;
     private ?int $dayNum = null;
+
     private ?int $hour = null;
     private ?int $minute = null;
     private ?int $second = null;
@@ -69,6 +70,9 @@ class Parser
     private int $yearQualification = 0;
     private int $monthQualification = 0;
     private int $dayQualification = 0;
+    private int $yearUnspecified = 0;
+    private int $monthUnspecified = 0;
+    private int $dayUnspecified = 0;
 
     private ?string $tzSign = null;
     private ?int $tzMinute = null;
@@ -76,54 +80,6 @@ class Parser
     private ?string $tzUtc = null;
 
     private int $intervalType = 0;
-
-    public function parse(string $data, bool $intervalMode = false): object
-    {
-        if($intervalMode && "" === $data){
-            $this->intervalType = Interval::UNKNOWN;
-            return $this;
-        }
-
-        if($intervalMode && ".." === $data) {
-            $this->intervalType = Interval::OPEN;
-            return $this;
-        }
-
-        $stringTypes = [
-            'tzUtc',
-            'tzSign',
-        ];
-
-        preg_match($this->regexPattern, $data, $matches);
-
-        if("" !== $data && count($matches) <= 1){
-            throw new \InvalidArgumentException(
-                sprintf("invalid data %s", $data)
-            );
-        }
-
-        foreach($matches as $name => $value){
-            if(is_int($name) || $value === ""){
-                continue;
-            }
-            if(!in_array($name, $stringTypes)){
-                $value = (int) $value;
-            }
-            $this->$name = $value;
-        }
-
-        // convert month into season
-        if($this->monthNum > 12){
-            $this->monthNum = null;
-            $this->season = (int)$matches['monthNum'];
-        }
-
-        $this->yearQualification = $this->configureQualification($matches, 'yearOpenFlag', 'yearCloseFlag');
-        $this->monthQualification = $this->configureQualification($matches, 'monthOpenFlag', 'monthCloseFlag');
-        $this->dayQualification = $this->configureQualification($matches, 'dayOpenFlag', 'dayCloseFlag');
-
-        return $this;
-    }
 
     private function configureQualification(array $matches, string $openFlag, string $closeFlag): int
     {
@@ -147,6 +103,106 @@ class Parser
         throw new \InvalidArgumentException(sprintf(
             'Invalid qualification flag "%s".', $value
         ));
+    }
+
+    public function parse(string $data, bool $intervalMode = false): object
+    {
+        $data = strtoupper($data);
+        if($intervalMode && "" === $data){
+            $this->intervalType = Interval::UNKNOWN;
+            return $this;
+        }
+
+        if($intervalMode && ".." === $data) {
+            $this->intervalType = Interval::OPEN;
+            return $this;
+        }
+
+        $stringTypes = [
+            'tzUtc',
+            'tzSign',
+        ];
+        $unspecifiedParts = ['yearNum', 'monthNum', 'dayNum'];
+
+        preg_match($this->regexPattern, $data, $matches);
+
+        if("" !== $data && count($matches) <= 1){
+            throw new \InvalidArgumentException(
+                sprintf("invalid data %s", $data)
+            );
+        }
+
+        // @TODO: if possible refactor this loop to use pure function like configureYear, configureMonth, etc.
+        foreach($matches as $name => $value){
+            if(is_int($name) || $value === ""){
+                continue;
+            }
+
+            if(in_array($name, $unspecifiedParts)){
+                // convert unspecified digit into zero
+                if(false !== strpos($value, 'X')){
+                    $propName = str_replace('Num','Unspecified', $name);
+                    $this->$propName = UnspecifiedDigit::UNSPECIFIED;
+                    $value = str_replace('X', '0', $value);
+                    $value = (int)$value;
+
+                    // convert zero value into null
+                    if(0 === $value){
+                        $value = null;
+                    }
+                }
+            }
+            if(!in_array($name, $stringTypes) && !is_null($value)){
+                $value = (int) $value;
+            }
+
+            $this->$name = $value;
+        }
+
+        // convert month into season
+        if($this->monthNum > 12){
+            $this->monthNum = null;
+            $this->season = (int)$matches['monthNum'];
+        }
+
+        $this->yearQualification = $this->configureQualification($matches, 'yearOpenFlag', 'yearCloseFlag');
+        $this->monthQualification = $this->configureQualification($matches, 'monthOpenFlag', 'monthCloseFlag');
+        $this->dayQualification = $this->configureQualification($matches, 'dayOpenFlag', 'dayCloseFlag');
+
+        return $this;
+    }
+
+    public function getYearUnspecified(): int
+    {
+        return $this->yearUnspecified;
+    }
+
+    public function setYearUnspecified(int $yearUnspecified): Parser
+    {
+        $this->yearUnspecified = $yearUnspecified;
+        return $this;
+    }
+
+    public function getMonthUnspecified(): int
+    {
+        return $this->monthUnspecified;
+    }
+
+    public function setMonthUnspecified(int $monthUnspecified): Parser
+    {
+        $this->monthUnspecified = $monthUnspecified;
+        return $this;
+    }
+
+    public function getDayUnspecified(): int
+    {
+        return $this->dayUnspecified;
+    }
+
+    public function setDayUnspecified(int $dayUnspecified): Parser
+    {
+        $this->dayUnspecified = $dayUnspecified;
+        return $this;
     }
 
     public function getIntervalType(): int

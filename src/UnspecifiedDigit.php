@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace EDTF;
 
 
-class Unspecified
+class UnspecifiedDigit
 {
     const SPECIFIED = 0;
     const UNSPECIFIED = 1;
@@ -21,16 +21,18 @@ class Unspecified
         $this->day = $day;
     }
 
-    public function specified(string $part): bool
+    public function specified(?string $part = null): bool
     {
-        $this->validatePartName($part);
-        return self::SPECIFIED === $this->$part;
+        return false === $this->unspecified($part);
     }
 
-    public function unspecified(string $part): bool
+    public function unspecified(?string $part = null): bool
     {
-        $this->validatePartName($part);
-        return self::UNSPECIFIED === $this->$part;
+        if(!is_null($part)){
+            $this->validatePartName($part);
+            return self::UNSPECIFIED === $this->$part;
+        }
+        return $this->unspecified('year') || $this->unspecified('month') || $this->unspecified('day');
     }
 
     private function validatePartName(string $part): void

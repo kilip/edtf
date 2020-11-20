@@ -65,7 +65,12 @@ class EDTF
             $parser->getMonthQualification(),
             $parser->getDayQualification()
         );
-        return new ExtDate($parser->getYearNum(), $parser->getMonthNum(), $parser->getDayNum(), $q, null, $parser->getIntervalType());
+        $u = new UnspecifiedDigit(
+            $parser->getYearUnspecified(),
+            $parser->getMonthUnspecified(),
+            $parser->getDayUnspecified()
+        );
+        return new ExtDate($parser->getYearNum(), $parser->getMonthNum(), $parser->getDayNum(), $q, $u, $parser->getIntervalType());
     }
 
     private static function createIntervalPair(string $data): ExtDate

@@ -13,7 +13,7 @@ class ExtDate implements ExtDateInterface
     protected ?int $month;
     protected ?int $day;
     protected Qualification $qualification;
-    protected Unspecified $unspecified;
+    protected UnspecifiedDigit $unspecified;
     protected int $intervalType;
 
     public function __construct(
@@ -21,7 +21,7 @@ class ExtDate implements ExtDateInterface
         ?int $month,
         ?int $day,
         ?Qualification $qualification = null,
-        ?Unspecified  $unspecified = null,
+        ?UnspecifiedDigit  $unspecified = null,
         int $intervalType = 0
     )
     {
@@ -30,7 +30,7 @@ class ExtDate implements ExtDateInterface
         $this->day = $day;
 
         $this->qualification = is_null($qualification) ? new Qualification():$qualification;
-        $this->unspecified = is_null($unspecified) ? new Unspecified():$unspecified;
+        $this->unspecified = is_null($unspecified) ? new UnspecifiedDigit():$unspecified;
         $this->intervalType = $intervalType;
     }
 
@@ -56,6 +56,11 @@ class ExtDate implements ExtDateInterface
          * @psalm-suppress PossiblyNullReference
          */
         return $this->qualification->uncertainAndApproximate($part);
+    }
+
+    public function unspecified(?string $part = null): bool
+    {
+        return $this->unspecified->unspecified($part);
     }
 
     public function isNormalInterval(): bool
